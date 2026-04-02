@@ -1,0 +1,95 @@
+/* ═══════════════════════════════════════════════
+   TOP HEADER
+═══════════════════════════════════════════════ */
+.header {
+  background: #0c1018;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  z-index: 200;
+}
+
+/* Brand logo pill (shown when sidebar is collapsed) */
+.headerLogo {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+  flex-shrink: 0;
+}
+
+/* Search input */
+.search {
+  width: 240px;
+}
+
+/* ═══════════════════════════════════════════════
+   ICON BUTTONS (notification, etc.)
+═══════════════════════════════════════════════ */
+.notifWrap {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+  flex-shrink: 0;
+}
+
+.notifWrap:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(99, 102, 241, 0.25);
+}
+
+.notifBadge {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 15px;
+  height: 15px;
+  background: #ef4444;
+  border-radius: 50%;
+  border: 2px solid #0c1018;
+  font-size: 8px;
+  font-weight: 700;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* ═══════════════════════════════════════════════
+   USER PROFILE CHIP
+═══════════════════════════════════════════════ */
+.userWrap {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 4px 12px 4px 4px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.userWrap:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(99, 102, 241, 0.25);
+}
+
+.avatar {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  color: white !important;
+  border: 2px solid rgba(255, 255, 255, 0.06) !important;
+}

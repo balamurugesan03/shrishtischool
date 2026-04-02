@@ -1,0 +1,128 @@
+.sidebar {
+  height: 100vh;
+  width: 260px;
+  background: linear-gradient(180deg, #4c2c9c 0%, #3d227c 100%);
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.brand {
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.brandText {
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 1.5px;
+}
+
+.mainLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mainLink {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease;
+  font-weight: 500;
+}
+
+.mainLink:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.mainLinkActive {
+  background-color: #3d227c;
+}
+
+.mainLinkIcon {
+  margin-right: 1rem;
+  width: 20px;
+  height: 20px;
+}
+
+.badge {
+  margin-left: auto;
+  background-color: #f03e3e;
+  color: white;
+  font-weight: 700;
+  border-radius: 50px;
+}
+
+.projectsSection {
+  margin-top: 2rem;
+}
+
+.sectionTitle {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 0 1rem 1rem 1rem;
+}
+
+.projectLink {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.projectLink:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.projectLinkIcon {
+  margin-right: 1rem;
+  width: 16px;
+  height: 16px;
+  color: #a382e2;
+}
+
+.profileSection {
+  margin-top: auto;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profileName {
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.profileLink {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.settingsButton {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease;
+}
+
+.settingsButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
