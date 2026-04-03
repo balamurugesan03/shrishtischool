@@ -28,6 +28,10 @@ import DayBook       from '../pages/accounting/DayBook';
 import CashBook      from '../pages/accounting/CashBook';
 import Payments      from '../pages/accounting/Payments';
 
+import StudentQRCodes    from '../pages/attendance/StudentQRCodes';
+import AttendanceScan    from '../pages/attendance/AttendanceScan';
+import AttendanceHistory from '../pages/attendance/AttendanceHistory';
+
 const P = ({ children }) => <ProtectedRoute>{children}</ProtectedRoute>;
 
 export default function AppRoutes() {
@@ -68,6 +72,11 @@ export default function AppRoutes() {
       <Route path="/accounting/daybook"  element={<P><DayBook /></P>} />
       <Route path="/accounting/cashbook" element={<P><CashBook /></P>} />
       <Route path="/accounting/payments" element={<P><Payments /></P>} />
+
+      {/* Attendance */}
+      <Route path="/attendance/scan"    element={<P><AttendanceScan /></P>} />
+      <Route path="/attendance/qr"      element={<P><StudentQRCodes /></P>} />
+      <Route path="/attendance/history" element={<P><AttendanceHistory /></P>} />
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

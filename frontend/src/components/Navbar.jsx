@@ -12,6 +12,7 @@ import {
   IconChevronUp, IconList, IconTag, IconShoppingCart, IconSend,
   IconHistory, IconChartBar, IconCash, IconBook, IconReceipt,
   IconCurrencyRupee, IconBrandWhatsapp, IconLogout,
+  IconScan, IconQrcode, IconClipboardList,
 } from '@tabler/icons-react';
 import { useColorMode } from '../App';
 import WhatsAppModal from './WhatsAppModal';
@@ -37,6 +38,14 @@ const NAV_ITEMS = [
     children: [
       { label: 'Invoices', path: '/billing/invoices', icon: IconReceipt },
       { label: 'Fees',     path: '/billing/fees',     icon: IconCurrencyRupee },
+    ],
+  },
+  {
+    label: 'Attendance', icon: IconScan,
+    children: [
+      { label: 'Scan QR',         path: '/attendance/scan',    icon: IconScan },
+      { label: 'Student QR Cards',path: '/attendance/qr',      icon: IconQrcode },
+      { label: 'History',         path: '/attendance/history', icon: IconClipboardList },
     ],
   },
   { label: 'Staff', path: '/staff', icon: IconUserCheck },

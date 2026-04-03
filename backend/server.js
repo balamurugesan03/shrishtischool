@@ -40,7 +40,8 @@ app.use('/api/cashbook', require('./routes/cashbookRoutes'));
 app.use('/api/daybook', require('./routes/daybookRoutes'));
 app.use('/api/payments', require('./routes/paymentRoutes'));
 app.use('/api/dashboard', require('./routes/dashboardRoutes'));
-app.use('/api/whatsapp', require('./routes/whatsappRoutes'));
+app.use('/api/whatsapp',    require('./routes/whatsappRoutes'));
+app.use('/api/attendance', require('./routes/attendanceRoutes'));
 
 // Error handling middleware
 app.use(require('./middleware/errorHandler'));

@@ -121,6 +121,15 @@ export const dashboardAPI = {
   getData: () => api.get('/dashboard')
 };
 
+// Attendance
+export const attendanceAPI = {
+  getAllQRs:   (params) => api.get('/attendance/qr', { params }),
+  getStudentQR:(id)     => api.get(`/attendance/qr/${id}`),
+  scan:        (studentId) => api.post('/attendance/scan', { studentId }),
+  getHistory:  (params) => api.get('/attendance', { params }),
+  getSummary:  ()       => api.get('/attendance/summary'),
+};
+
 // WhatsApp
 export const whatsappAPI = {
   getStatus:  ()             => api.get('/whatsapp/status'),
