@@ -18,7 +18,17 @@ function init() {
   client = new Client({
     authStrategy: new LocalAuth({ dataPath: '.wwebjs_auth' }),
     puppeteer: {
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+      headless: true,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-accelerated-2d-canvas',
+        '--disable-gpu',
+        '--no-first-run',
+        '--no-zygote',
+        '--single-process',
+      ],
     },
   });
 
@@ -48,6 +58,10 @@ function init() {
     qrDataURL = null;
     client = null;
     console.log('[WhatsApp] Auth failed');
+  });
+
+  client.on('error', (err) => {
+    console.error('[WhatsApp] Client error:', err.message);
   });
 
   client.on('disconnected', (reason) => {
