@@ -3,7 +3,7 @@ const Payment = require('../models/Payment');
 const Ledger = require('../models/Ledger');
 const CashBook = require('../models/CashBook');
 const DayBook = require('../models/DayBook');
-const { generateInvoiceNumber, generatePaymentNumber } = require('../utils/generateId');
+const { generateInvoiceNumber, generatePaymentNumber, generateReceiptNumber } = require('../utils/generateId');
 const { successResponse, errorResponse, paginatedResponse } = require('../utils/apiResponse');
 const { generateInvoicePDF } = require('../utils/generateInvoicePDF');
 const wa = require('../services/whatsappService');
@@ -129,8 +129,10 @@ exports.recordPayment = async (req, res, next) => {
     });
 
     const paymentNumber = await generatePaymentNumber(Payment);
+    const receiptNumber = await generateReceiptNumber(Payment);
     const payment = await Payment.create({
       paymentNumber,
+      receiptNumber,
       type: 'Receipt',
       referenceType: 'Invoice',
       referenceId: invoice._id,

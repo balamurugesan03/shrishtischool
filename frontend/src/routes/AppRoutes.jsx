@@ -28,11 +28,16 @@ import DayBook       from '../pages/accounting/DayBook';
 import CashBook      from '../pages/accounting/CashBook';
 import Payments      from '../pages/accounting/Payments';
 
-import StudentQRCodes    from '../pages/attendance/StudentQRCodes';
-import AttendanceScan    from '../pages/attendance/AttendanceScan';
-import AttendanceHistory from '../pages/attendance/AttendanceHistory';
+import StudentQRCodes          from '../pages/attendance/StudentQRCodes';
+import AttendanceScan          from '../pages/attendance/AttendanceScan';
+import AttendanceHistory       from '../pages/attendance/AttendanceHistory';
+import StaffQRCodes            from '../pages/attendance/StaffQRCodes';
+import StaffAttendanceScan     from '../pages/attendance/StaffAttendanceScan';
+import StaffAttendanceHistory  from '../pages/attendance/StaffAttendanceHistory';
+import UserManagement          from '../pages/users/UserManagement';
 
 const P = ({ children }) => <ProtectedRoute>{children}</ProtectedRoute>;
+const A = ({ children }) => <ProtectedRoute adminOnly>{children}</ProtectedRoute>;
 
 export default function AppRoutes() {
   return (
@@ -73,10 +78,18 @@ export default function AppRoutes() {
       <Route path="/accounting/cashbook" element={<P><CashBook /></P>} />
       <Route path="/accounting/payments" element={<P><Payments /></P>} />
 
-      {/* Attendance */}
+      {/* Student Attendance */}
       <Route path="/attendance/scan"    element={<P><AttendanceScan /></P>} />
       <Route path="/attendance/qr"      element={<P><StudentQRCodes /></P>} />
       <Route path="/attendance/history" element={<P><AttendanceHistory /></P>} />
+
+      {/* Staff Attendance */}
+      <Route path="/staff-attendance/scan"    element={<P><StaffAttendanceScan /></P>} />
+      <Route path="/staff-attendance/qr"      element={<P><StaffQRCodes /></P>} />
+      <Route path="/staff-attendance/history" element={<P><StaffAttendanceHistory /></P>} />
+
+      {/* User Management — admin only */}
+      <Route path="/users" element={<A><UserManagement /></A>} />
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

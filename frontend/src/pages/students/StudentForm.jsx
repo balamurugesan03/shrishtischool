@@ -6,10 +6,11 @@ import {
 import { useSnackbar } from 'notistack';
 import { IconUser, IconUsers, IconHome } from '@tabler/icons-react';
 import PageHeader from '../../components/PageHeader';
-import { studentAPI } from '../../services/api';
+import api, { studentAPI } from '../../services/api';
 
-const CLASSES = ['1','2','3','4','5','6','7','8','9','10','11','12'];
+const CLASSES = ['Playgroup','Pre-KG','LKG','UKG','1','2','3','4','5','6','7','8','9','10','11','12'];
 const SECTIONS = ['A','B','C','D','E'];
+const AUTO_ROLL_CLASSES = ['Playgroup','Pre-KG','LKG','UKG'];
 
 function TabPanel({ children, value, index }) {
   return value === index ? <Box pt={2}>{children}</Box> : null;
@@ -39,6 +40,17 @@ export default function StudentForm() {
   const isEdit = Boolean(id);
 
   const set = (field) => (e) => setValues(prev => ({ ...prev, [field]: e.target.value }));
+
+  const handleClassChange = async (e) => {
+    const cls = e.target.value;
+    setValues(prev => ({ ...prev, class: cls, rollNumber: '' }));
+    if (AUTO_ROLL_CLASSES.includes(cls) && !isEdit) {
+      try {
+        const res = await api.get('/students/next-roll-number', { params: { class: cls } });
+        setValues(prev => ({ ...prev, class: cls, rollNumber: res.data.rollNumber }));
+      } catch (_) {}
+    }
+  };
   const setNested = (parent, field) => (e) =>
     setValues(prev => ({ ...prev, [parent]: { ...prev[parent], [field]: e.target.value } }));
 
@@ -135,8 +147,8 @@ export default function StudentForm() {
               <Grid item xs={12} sm={6} md={4}>{tf('Phone', 'phone', false)}</Grid>
               <Grid item xs={12} sm={6} md={4}>
                 <TextField select label="Class" size="small" fullWidth required
-                  value={values.class} onChange={set('class')} error={!!errors.class} helperText={errors.class}>
-                  {CLASSES.map(c => <MenuItem key={c} value={c}>Class {c}</MenuItem>)}
+                  value={values.class} onChange={handleClassChange} error={!!errors.class} helperText={errors.class}>
+                  {CLASSES.map(c => <MenuItem key={c} value={c}>{['Playgroup','Pre-KG','LKG','UKG'].includes(c) ? c : `Class ${c}`}</MenuItem>)}
                 </TextField>
               </Grid>
               <Grid item xs={12} sm={6} md={4}>

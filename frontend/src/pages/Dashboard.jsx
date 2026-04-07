@@ -99,7 +99,7 @@ export default function Dashboard() {
             Good morning, Admin
           </Typography>
           <Typography variant="body2" color="text.secondary" mt={0.5}>
-            Here's what's happening at Bright Future School today.
+            Here's what's happening at Shrishti Kinder International School today.
           </Typography>
         </Box>
         <Chip

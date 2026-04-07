@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import skisLogo from '../assets/logo.png';
 import {
   AppShell, Burger, Group, Text, ScrollArea,
   Avatar, useMantineColorScheme, ActionIcon,
@@ -70,6 +71,7 @@ const NAV = [
     links: [
       { label: 'All Staff', path: '/staff' },
       { label: 'Add Staff', path: '/staff/add' },
+      {label :'students attendance' ,path:"/staff-attendance/scan"}
     ],
   },
   {
@@ -228,12 +230,11 @@ export default function AppLayout({ children }) {
 
           <Group gap={10}>
             <Burger opened={mobileOpen} onClick={toggle} hiddenFrom="sm" size="sm" />
-            <Box className={classes.headerLogo}>
-              <IconSchool size={21} color="#fff" stroke={2} />
-            </Box>
+            <Box component="img" src={skisLogo} alt="SKIS Logo"
+              style={{ width: 36, height: 36, objectFit: 'contain', borderRadius: 6 }} />
             <Box>
               <Text fw={800} size="sm" lh={1.2} c="#1e1b4b" style={{ letterSpacing: '-0.2px' }}>
-                EduManage Pro
+                Shrishti Kinder International School
               </Text>
               <Text size="10px" c="#94a3b8" lh={1} mt={1}>School Management System</Text>
             </Box>
@@ -269,12 +270,11 @@ export default function AppLayout({ children }) {
 
         {/* Brand */}
         <Box className={classes.brand}>
-          <Box className={classes.brandIcon}>
-            <IconSchool size={23} color="#fff" stroke={2} />
-          </Box>
+          <Box component="img" src={skisLogo} alt="SKIS Logo"
+            style={{ width: 36, height: 36, objectFit: 'contain', borderRadius: 6, flexShrink: 0 }} />
           <Box style={{ overflow: 'hidden', flex: 1 }}>
-            <Text size="14px" fw={800} c="white" lh={1.3} truncate style={{ letterSpacing: '-0.2px' }}>
-              Bright Future School
+            <Text size="13px" fw={800} c="white" lh={1.3} truncate style={{ letterSpacing: '-0.2px' }}>
+              Shrishti Kinder International School
             </Text>
             <Text size="11px" c="rgba(255,255,255,0.35)" lh={1} mt={2}>
               Academic Year 2026–27

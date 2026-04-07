@@ -2,7 +2,7 @@ const Fee = require('../models/Fee');
 const Payment = require('../models/Payment');
 const CashBook = require('../models/CashBook');
 const DayBook = require('../models/DayBook');
-const { generatePaymentNumber } = require('../utils/generateId');
+const { generatePaymentNumber, generateReceiptNumber } = require('../utils/generateId');
 const { successResponse, errorResponse, paginatedResponse } = require('../utils/apiResponse');
 const { generateFeePDF } = require('../utils/generateFeePDF');
 const wa = require('../services/whatsappService');
@@ -122,8 +122,14 @@ exports.collectFeePayment = async (req, res, next) => {
     });
 
     const paymentNumber = await generatePaymentNumber(Payment);
+    const autoReceiptNumber = await generateReceiptNumber(Payment);
+    const finalReceiptNumber = receiptNumber || autoReceiptNumber;
+
+    await Fee.findByIdAndUpdate(req.params.id, { receiptNumber: finalReceiptNumber });
+
     const payment = await Payment.create({
       paymentNumber,
+      receiptNumber: finalReceiptNumber,
       type: 'Receipt',
       referenceType: 'Fee',
       referenceId: fee._id,

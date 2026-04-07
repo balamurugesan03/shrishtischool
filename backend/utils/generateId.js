@@ -26,6 +26,21 @@ const generatePaymentNumber = async (Payment) => {
   return `PAY${String(count + 1).padStart(5, '0')}`;
 };
 
+const generateReceiptNumber = async (Payment) => {
+  const date = new Date();
+  const yy = date.getFullYear().toString().slice(-2);
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const prefix = `RCT${yy}${mm}`;
+  // Count receipts this month
+  const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+  const endOfMonth   = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59);
+  const monthCount = await Payment.countDocuments({
+    type: 'Receipt',
+    createdAt: { $gte: startOfMonth, $lte: endOfMonth }
+  });
+  return `${prefix}${String(monthCount + 1).padStart(4, '0')}`;
+};
+
 const generatePurchaseNumber = async (PurchaseEntry) => {
   const count = await PurchaseEntry.countDocuments();
   return `PUR${String(count + 1).padStart(5, '0')}`;
@@ -37,5 +52,6 @@ module.exports = {
   generateProductCode,
   generateInvoiceNumber,
   generatePaymentNumber,
+  generateReceiptNumber,
   generatePurchaseNumber
 };

@@ -32,7 +32,11 @@ export default function Payments() {
   useEffect(() => { fetchPayments(); }, [fetchPayments]);
 
   const columns = [
-    { key: 'paymentNumber', label: 'Payment #', render: v => <Typography variant="body2" fontWeight={500} color="primary">{v}</Typography> },
+    { key: 'receiptNumber', label: 'Receipt #', render: (v, row) => (
+      <Typography variant="body2" fontWeight={600} color={v ? 'success.main' : 'text.disabled'}>
+        {v || row.paymentNumber}
+      </Typography>
+    )},
     { key: 'date', label: 'Date', render: v => new Date(v).toLocaleDateString() },
     { key: 'type', label: 'Type', render: v => <Chip label={v} size="small" color={v === 'Receipt' ? 'success' : 'error'} variant="outlined" sx={{ height: 20, fontSize: '11px', fontWeight: 600 }} /> },
     { key: 'student', label: 'Student', render: v => v ? `${v.firstName} ${v.lastName}` : '-' },

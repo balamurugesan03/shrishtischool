@@ -9,7 +9,7 @@ import DataTable from '../../components/DataTable';
 import PageHeader from '../../components/PageHeader';
 import StatusBadge from '../../components/StatusBadge';
 import ConfirmModal from '../../components/ConfirmModal';
-import { feeAPI, studentAPI } from '../../services/api';
+import api, { feeAPI, studentAPI } from '../../services/api';
 
 const CLASS_LIST = ['1','2','3','4','5','6','7','8','9','10','11','12'];
 const SECTION_LIST = ['A','B','C','D','E'];
@@ -180,7 +180,15 @@ export default function FeeManagement() {
           )}
           {row.balance > 0 && (
             <Tooltip title="Collect Payment">
-              <IconButton size="small" color="success" onClick={() => { setCollectFee(row); setCollectValues({ amount: row.balance, paymentMode: 'Cash', receiptNumber: '' }); setCollectOpen(true); }}>
+              <IconButton size="small" color="success" onClick={async () => {
+                  setCollectFee(row);
+                  setCollectValues({ amount: row.balance, paymentMode: 'Cash', receiptNumber: '' });
+                  setCollectOpen(true);
+                  try {
+                    const res = await api.get('/payments/next-receipt-number');
+                    setCollectValues(prev => ({ ...prev, receiptNumber: res.data.receiptNumber }));
+                  } catch (_) {}
+                }}>
                 <IconCurrencyRupee size={16} />
               </IconButton>
             </Tooltip>
@@ -315,7 +323,9 @@ export default function FeeManagement() {
                 {['Cash','Cheque','Online','Card','UPI'].map(m => <MenuItem key={m} value={m}>{m}</MenuItem>)}
               </TextField>
               <TextField label="Receipt Number" size="small" fullWidth
-                value={collectValues.receiptNumber} onChange={setCollect('receiptNumber')} />
+                value={collectValues.receiptNumber} onChange={setCollect('receiptNumber')}
+                helperText="Auto-generated — you can edit if needed"
+                InputProps={{ sx: { fontWeight: 600 } }} />
             </Stack>
           </DialogContent>
           <DialogActions sx={{ px: 3, pb: 2 }}>

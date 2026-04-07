@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import skisLogo from '../assets/logo.png';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   AppBar, Toolbar, Box, Button, IconButton, Typography, Avatar,
@@ -12,7 +13,7 @@ import {
   IconChevronUp, IconList, IconTag, IconShoppingCart, IconSend,
   IconHistory, IconChartBar, IconCash, IconBook, IconReceipt,
   IconCurrencyRupee, IconBrandWhatsapp, IconLogout,
-  IconScan, IconQrcode, IconClipboardList,
+  IconScan, IconQrcode, IconClipboardList, IconId, IconShield, IconPlus,
 } from '@tabler/icons-react';
 import { useColorMode } from '../App';
 import WhatsAppModal from './WhatsAppModal';
@@ -23,34 +24,48 @@ const NAV_ITEMS = [
   { label: 'Dashboard', path: '/', icon: IconDashboard },
   { label: 'Students',  path: '/students', icon: IconUsers },
   {
-    label: 'Inventory', icon: IconPackage,
+    label: 'Inventory', icon: IconPackage, adminOnly: true,
     children: [
-      { label: 'Products',       path: '/inventory/products',  icon: IconList },
-      { label: 'Categories',     path: '/inventory/categories',icon: IconTag },
-      { label: 'Purchase Entry', path: '/inventory/purchases', icon: IconShoppingCart },
-      { label: 'Issue Inventory',path: '/inventory/issue',     icon: IconSend },
+      { label: 'Products',       path: '/inventory/products',      icon: IconList },
+      { label: 'Categories',     path: '/inventory/categories',    icon: IconTag },
+      { label: 'Purchase Entry', path: '/inventory/purchases',     icon: IconShoppingCart },
+      { label: 'Issue Inventory',path: '/inventory/issue',         icon: IconSend },
       { label: 'Issue History',  path: '/inventory/issue-history', icon: IconHistory },
-      { label: 'Stock Report',   path: '/inventory/stock',     icon: IconChartBar },
+      { label: 'Stock Report',   path: '/inventory/stock',         icon: IconChartBar },
     ],
   },
   {
-    label: 'Billing', icon: IconFileInvoice,
+    label: 'Billing', icon: IconFileInvoice, adminOnly: true,
     children: [
       { label: 'Invoices', path: '/billing/invoices', icon: IconReceipt },
       { label: 'Fees',     path: '/billing/fees',     icon: IconCurrencyRupee },
     ],
   },
   {
-    label: 'Attendance', icon: IconScan,
+    label: 'Student Attendance', icon: IconScan,
     children: [
       { label: 'Scan QR',         path: '/attendance/scan',    icon: IconScan },
       { label: 'Student QR Cards',path: '/attendance/qr',      icon: IconQrcode },
       { label: 'History',         path: '/attendance/history', icon: IconClipboardList },
     ],
   },
-  { label: 'Staff', path: '/staff', icon: IconUserCheck },
   {
-    label: 'Accounting', icon: IconCalculator,
+    label: 'Staff Attendance', icon: IconUserCheck,
+    children: [
+      { label: 'Staff QR Codes',     path: '/staff-attendance/qr',      icon: IconQrcode },
+      { label: 'Scan Staff',         path: '/staff-attendance/scan',     icon: IconScan },
+      { label: 'Attendance History', path: '/staff-attendance/history',  icon: IconClipboardList },
+    ],
+  },
+  {
+    label: 'Staff', icon: IconId, adminOnly: true,
+    children: [
+      { label: 'All Staff', path: '/staff',     icon: IconList },
+      { label: 'Add Staff', path: '/staff/add', icon: IconPlus },
+    ],
+  },
+  {
+    label: 'Accounting', icon: IconCalculator, adminOnly: true,
     children: [
       { label: 'Ledger',   path: '/accounting/ledger',   icon: IconBook },
       { label: 'Day Book', path: '/accounting/daybook',  icon: IconList },
@@ -58,6 +73,7 @@ const NAV_ITEMS = [
       { label: 'Payments', path: '/accounting/payments', icon: IconReceipt },
     ],
   },
+  { label: 'Users', path: '/users', icon: IconShield, adminOnly: true },
 ];
 
 function NavDropdown({ item, location }) {
@@ -111,7 +127,7 @@ function NavDropdown({ item, location }) {
   );
 }
 
-function MobileDrawer({ open, onClose }) {
+function MobileDrawer({ open, onClose, navItems }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [openSections, setOpenSections] = useState({});
@@ -121,16 +137,14 @@ function MobileDrawer({ open, onClose }) {
   return (
     <Drawer anchor="left" open={open} onClose={onClose} PaperProps={{ sx: { width: 280 } }}>
       <Box sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 1.5 }}>
-        <Box sx={{ width: 32, height: 32, bgcolor: 'primary.main', borderRadius: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <IconSchool size={18} color="#fff" />
-        </Box>
-        <Typography variant="subtitle1" fontWeight={800} sx={{ letterSpacing: '-0.2px' }}>
-          EduManage Pro
+        <Box component="img" src={skisLogo} alt="Logo" sx={{ width: 32, height: 32, borderRadius: 1, objectFit: 'contain' }} />
+        <Typography variant="subtitle1" fontWeight={800} sx={{ letterSpacing: '-0.2px', fontSize: '13px' }}>
+          Shrishti Kinder International School
         </Typography>
       </Box>
       <Divider />
       <List dense>
-        {NAV_ITEMS.map(item => {
+        {navItems.map(item => {
           const Icon = item.icon;
           if (!item.children) {
             return (
@@ -189,6 +203,8 @@ export default function TopNavbar() {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { mode, toggleColorMode } = useColorMode();
   const { user, logout } = useAuth();
+  const isAdmin = user?.role === 'superadmin' || user?.role === 'admin';
+  const visibleNav = NAV_ITEMS.filter(item => !item.adminOnly || isAdmin);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [waModalOpen, setWaModalOpen] = useState(false);
   const [waStatus, setWaStatus] = useState('disconnected');
@@ -236,16 +252,16 @@ export default function TopNavbar() {
             <Typography
               variant="subtitle1"
               fontWeight={800}
-              sx={{ letterSpacing: '-0.3px', display: { xs: 'none', sm: 'block' }, whiteSpace: 'nowrap' }}
+              sx={{ letterSpacing: '-0.3px', display: { xs: 'none', sm: 'block' }, whiteSpace: 'nowrap', fontSize: '13px' }}
             >
-              EduManage Pro
+              Shrishti Kinder International School
             </Typography>
           </Box>
 
           {/* Desktop navigation */}
           {!isMobile && (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, flex: 1, overflow: 'hidden' }}>
-              {NAV_ITEMS.map(item => {
+              {visibleNav.map(item => {
                 const Icon = item.icon;
                 if (item.children) {
                   return <NavDropdown key={item.label} item={item} location={location} />;
@@ -326,7 +342,7 @@ export default function TopNavbar() {
         </Toolbar>
       </AppBar>
 
-      <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+      <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} navItems={visibleNav} />
       <WhatsAppModal open={waModalOpen} onClose={() => setWaModalOpen(false)} />
     </>
   );

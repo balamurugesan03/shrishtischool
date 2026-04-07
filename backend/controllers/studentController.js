@@ -74,6 +74,44 @@ exports.deleteStudent = async (req, res, next) => {
   }
 };
 
+// GET /api/students/next-roll-number?class=Playgroup
+exports.getNextRollNumber = async (req, res, next) => {
+  try {
+    const cls = req.query.class;
+    const PREFIX_MAP = {
+      'Playgroup': 'SKIS01',
+      'Pre-KG':   'SKIS02',
+      'LKG':      'SKIS03',
+      'UKG':      'SKIS04',
+    };
+
+    const prefix = PREFIX_MAP[cls];
+    if (!prefix) return errorResponse(res, 'Class not supported for auto roll number', 400);
+
+    const year = new Date().getFullYear().toString().slice(-2); // "26"
+    const basePrefix = `${prefix}${year}`; // e.g. "SKIS0126"
+
+    // Find all students in this class with matching roll number pattern
+    const students = await Student.find({
+      class: cls,
+      rollNumber: { $regex: `^${basePrefix}` }
+    }).select('rollNumber');
+
+    let maxSeq = 0;
+    students.forEach(s => {
+      const seq = parseInt(s.rollNumber.replace(basePrefix, ''), 10);
+      if (!isNaN(seq) && seq > maxSeq) maxSeq = seq;
+    });
+
+    const nextSeq = (maxSeq === 0 ? 1 : maxSeq + 1).toString().padStart(3, '0');
+    const rollNumber = `${basePrefix}${nextSeq}`;
+
+    return successResponse(res, { rollNumber });
+  } catch (error) {
+    next(error);
+  }
+};
+
 exports.getStudentProfile = async (req, res, next) => {
   try {
     const StudentInventory = require('../models/StudentInventory');
