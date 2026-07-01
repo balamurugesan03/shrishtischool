@@ -1,6 +1,7 @@
 const generateStudentId = async (Student) => {
-  const count = await Student.countDocuments();
-  return `STU${String(count + 1).padStart(5, '0')}`;
+  const last = await Student.findOne({ studentId: /^STU\d+$/ }).sort({ studentId: -1 });
+  const nextNum = last ? parseInt(last.studentId.replace('STU', ''), 10) + 1 : 1;
+  return `STU${String(nextNum).padStart(5, '0')}`;
 };
 
 const generateStaffId = async (Staff) => {

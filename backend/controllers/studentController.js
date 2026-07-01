@@ -42,10 +42,23 @@ exports.getStudent = async (req, res, next) => {
 };
 
 exports.createStudent = async (req, res, next) => {
+  const MAX_ATTEMPTS = 5;
   try {
-    const studentId = await generateStudentId(Student);
-    const student = await Student.create({ ...req.body, studentId });
-    return successResponse(res, student, 'Student created successfully', 201);
+    let lastError;
+    for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+      const studentId = await generateStudentId(Student);
+      try {
+        const student = await Student.create({ ...req.body, studentId });
+        return successResponse(res, student, 'Student created successfully', 201);
+      } catch (error) {
+        if (error.code === 11000 && error.keyValue && error.keyValue.studentId) {
+          lastError = error;
+          continue;
+        }
+        throw error;
+      }
+    }
+    throw lastError;
   } catch (error) {
     next(error);
   }
