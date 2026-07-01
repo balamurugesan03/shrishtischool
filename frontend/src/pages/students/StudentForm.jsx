@@ -21,7 +21,7 @@ const INIT = {
   email: '', phone: '', class: '', section: '', rollNumber: '',
   status: 'Active', bloodGroup: '', religion: '', category: '',
   academicYear: `${new Date().getFullYear()}-${new Date().getFullYear() + 1}`,
-  address: { street: '', city: '', state: '', pincode: '' },
+  address: { addressLine: '', street: '', city: '', state: '', pincode: '' },
   parentDetails: {
     fatherName: '', fatherPhone: '', fatherOccupation: '',
     motherName: '', motherPhone: '', motherOccupation: '',
@@ -191,6 +191,7 @@ export default function StudentForm() {
 
           <TabPanel value={tab} index={2}>
             <Grid container spacing={2}>
+              <Grid item xs={12}>{ntf('Address Line', 'address', 'addressLine')}</Grid>
               <Grid item xs={12} sm={6}>{ntf('Street', 'address', 'street')}</Grid>
               <Grid item xs={12} sm={6}>{ntf('City', 'address', 'city')}</Grid>
               <Grid item xs={12} sm={6}>{ntf('State', 'address', 'state')}</Grid>

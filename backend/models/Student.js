@@ -13,6 +13,7 @@ const studentSchema = new mongoose.Schema({
   email: { type: String, trim: true, lowercase: true },
   phone: { type: String, trim: true },
   address: {
+    addressLine: String,
     street: String,
     city: String,
     state: String,

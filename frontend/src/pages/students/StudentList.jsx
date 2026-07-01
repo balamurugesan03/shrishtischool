@@ -117,8 +117,8 @@ export default function StudentList() {
           sx={{ width: 150 }}
         >
           <MenuItem value="">All Classes</MenuItem>
-          {['1','2','3','4','5','6','7','8','9','10','11','12'].map(c => (
-            <MenuItem key={c} value={c}>Class {c}</MenuItem>
+          {['Playgroup','Pre-KG','LKG','UKG','1','2','3','4','5','6','7','8','9','10','11','12'].map(c => (
+            <MenuItem key={c} value={c}>{['Playgroup','Pre-KG','LKG','UKG'].includes(c) ? c : `Class ${c}`}</MenuItem>
           ))}
         </TextField>
         <TextField

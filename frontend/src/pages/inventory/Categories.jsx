@@ -13,6 +13,31 @@ import { categoryAPI } from '../../services/api';
 
 const INIT = { name: '', description: '', status: 'Active' };
 
+const SORT_OPTIONS = [
+  { value: 'name_asc', label: 'Name (A-Z)' },
+  { value: 'name_desc', label: 'Name (Z-A)' },
+  { value: 'status', label: 'Status' },
+  { value: 'newest', label: 'Newest First' },
+  { value: 'oldest', label: 'Oldest First' },
+];
+
+function sortCategories(list, sortBy) {
+  const sorted = [...list];
+  switch (sortBy) {
+    case 'name_desc':
+      return sorted.sort((a, b) => b.name.localeCompare(a.name));
+    case 'status':
+      return sorted.sort((a, b) => a.status.localeCompare(b.status) || a.name.localeCompare(b.name));
+    case 'newest':
+      return sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    case 'oldest':
+      return sorted.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    case 'name_asc':
+    default:
+      return sorted.sort((a, b) => a.name.localeCompare(b.name));
+  }
+}
+
 export default function Categories() {
   const { enqueueSnackbar } = useSnackbar();
   const [data, setData] = useState([]);
@@ -23,6 +48,7 @@ export default function Categories() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
   const [formValues, setFormValues] = useState(INIT);
+  const [sortBy, setSortBy] = useState('name_asc');
 
   const fetchData = async () => {
     setLoading(true);
@@ -97,12 +123,24 @@ export default function Categories() {
     }
   ];
 
+  const sortedData = sortCategories(data, sortBy);
+
   return (
     <>
       <PageHeader title="Categories" subtitle="Manage product categories"
         action={<Button variant="contained" startIcon={<IconPlus size={16} />} onClick={() => { setEditItem(null); setFormOpen(true); }}>Add Category</Button>} />
 
-      <DataTable columns={columns} data={data} loading={loading} total={data.length} page={1} limit={data.length || 1} />
+      <Box sx={{ display: 'flex', gap: 1.5, mb: 2, flexWrap: 'wrap' }}>
+        <TextField
+          select size="small" label="Sort By"
+          value={sortBy} onChange={e => setSortBy(e.target.value)}
+          sx={{ width: 180 }}
+        >
+          {SORT_OPTIONS.map(o => <MenuItem key={o.value} value={o.value}>{o.label}</MenuItem>)}
+        </TextField>
+      </Box>
+
+      <DataTable columns={columns} data={sortedData} loading={loading} total={sortedData.length} page={1} limit={sortedData.length || 1} />
 
       <Dialog open={formOpen} onClose={() => setFormOpen(false)} maxWidth="xs" fullWidth>
         <form onSubmit={handleSubmit}>
