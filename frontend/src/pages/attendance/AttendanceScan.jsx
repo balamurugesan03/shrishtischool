@@ -40,6 +40,8 @@ export default function AttendanceScan() {
       const res = await api.post('/attendance/scan', { studentId: decodedText });
       const result = {
         type: res.data.type,
+        label: res.data.label,
+        breakLabel: res.data.breakLabel,
         student: res.data.student,
         whatsappSent: res.data.whatsappSent,
         whatsappError: res.data.whatsappError,
@@ -182,8 +184,8 @@ export default function AttendanceScan() {
               <CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
                   <Chip
-                    label={lastResult.type === 'IN' ? 'ENTERED' : 'LEFT'}
-                    color={resultColor}
+                    label={(lastResult.label || (lastResult.type === 'IN' ? 'ENTERED' : 'LEFT')).toUpperCase()}
+                    color={lastResult.breakLabel ? 'info' : resultColor}
                     size="small"
                     icon={resultIcon}
                   />
@@ -259,6 +261,7 @@ export default function AttendanceScan() {
                           secondary={
                             <Typography variant="caption" color="text.secondary">
                               {scan.student.studentId} &bull; Class {scan.student.class}-{scan.student.section} &bull; {formatTime(scan.timestamp)}
+                              {scan.breakLabel && <> &bull; {scan.breakLabel}</>}
                             </Typography>
                           }
                         />

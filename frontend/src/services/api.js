@@ -133,5 +133,7 @@ export const attendanceAPI = {
 // WhatsApp
 export const whatsappAPI = {
   getStatus:  ()             => api.get('/whatsapp/status'),
+  connect:    ()             => api.post('/whatsapp/connect'),
+  disconnect: ()             => api.post('/whatsapp/disconnect'),
   send:       (phone, message) => api.post('/whatsapp/send', { phone, message }),
 };

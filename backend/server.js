@@ -4,11 +4,19 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
-const whatsappService = require('./services/whatsappService');
 
 dotenv.config();
 
 const app = express();
+
+// A crash in a background subsystem (e.g. the WhatsApp/Puppeteer session)
+// must not take down fee/student/attendance APIs — log and keep serving.
+process.on('unhandledRejection', (err) => {
+  console.error('[UnhandledRejection]', err);
+});
+process.on('uncaughtException', (err) => {
+  console.error('[UncaughtException]', err);
+});
 
 // Connect to database and seed superadmin
 connectDB().then(async () => {
@@ -19,9 +27,6 @@ connectDB().then(async () => {
     console.log('[Auth] Superadmin created — username: superadmin | password: Admin@123');
   }
 });
-
-// Auto-connect WhatsApp using the saved session (default number 7397773618)
-whatsappService.init();
 
 // Middleware
 app.use(helmet());

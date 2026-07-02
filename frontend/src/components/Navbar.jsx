@@ -16,6 +16,7 @@ import {
   IconScan, IconQrcode, IconClipboardList, IconId, IconShield, IconPlus,
 } from '@tabler/icons-react';
 import { useColorMode } from '../App';
+import WhatsAppModal from './WhatsAppModal';
 import { whatsappAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
@@ -205,6 +206,7 @@ export default function TopNavbar() {
   const isAdmin = user?.role === 'superadmin' || user?.role === 'admin';
   const visibleNav = NAV_ITEMS.filter(item => !item.adminOnly || isAdmin);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [waModalOpen, setWaModalOpen] = useState(false);
   const [waStatus, setWaStatus] = useState('disconnected');
 
   const handleLogout = () => { logout(); navigate('/login'); };
@@ -298,9 +300,10 @@ export default function TopNavbar() {
               </IconButton>
             </Tooltip>
 
-            {/* WhatsApp status (read-only — fixed default number, no relinking from UI) */}
+            {/* WhatsApp status */}
             <Tooltip title={`WhatsApp: ${waStatus}`}>
-              <Box sx={{ position: 'relative', display: 'inline-flex', p: '8px' }}>
+              <IconButton size="small" onClick={() => setWaModalOpen(true)}
+                sx={{ position: 'relative' }}>
                 <IconBrandWhatsapp size={18} color={waColor} />
                 <Box sx={{
                   position: 'absolute', top: 6, right: 6,
@@ -308,7 +311,7 @@ export default function TopNavbar() {
                   bgcolor: waColor, border: '1.5px solid',
                   borderColor: 'background.paper',
                 }} />
-              </Box>
+              </IconButton>
             </Tooltip>
 
             {/* Notifications */}
@@ -340,6 +343,7 @@ export default function TopNavbar() {
       </AppBar>
 
       <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} navItems={visibleNav} />
+      <WhatsAppModal open={waModalOpen} onClose={() => setWaModalOpen(false)} />
     </>
   );
 }

@@ -26,8 +26,6 @@ function init() {
         '--disable-accelerated-2d-canvas',
         '--disable-gpu',
         '--no-first-run',
-        '--no-zygote',
-        '--single-process',
       ],
     },
   });
@@ -71,7 +69,12 @@ function init() {
     console.log('[WhatsApp] Disconnected:', reason);
   });
 
-  client.initialize();
+  client.initialize().catch((err) => {
+    console.error('[WhatsApp] Initialize failed:', err.message);
+    status = 'disconnected';
+    qrDataURL = null;
+    client = null;
+  });
 }
 
 async function sendMessage(phone, message) {
@@ -103,5 +106,17 @@ async function disconnect() {
   status = 'disconnected';
   qrDataURL = null;
 }
+
+// Close the browser cleanly on restart/shutdown so it doesn't linger and
+// lock the session profile for the next process (nodemon sends SIGUSR2).
+async function shutdown() {
+  if (client) {
+    try { await client.destroy(); } catch (_) {}
+  }
+  process.exit(0);
+}
+process.once('SIGINT', shutdown);
+process.once('SIGTERM', shutdown);
+process.once('SIGUSR2', shutdown);
 
 module.exports = { init, getState, sendMessage, sendDocument, disconnect };

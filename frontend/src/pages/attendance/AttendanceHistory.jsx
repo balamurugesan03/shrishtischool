@@ -80,6 +80,13 @@ export default function AttendanceHistory() {
       )
     },
     {
+      key: 'breakLabel',
+      label: 'Break',
+      render: (val) => val
+        ? <Chip label={val} size="small" variant="outlined" color="info" sx={{ fontSize: '11px' }} />
+        : <Typography variant="body2" color="text.disabled">—</Typography>
+    },
+    {
       key: 'date',
       label: 'Date',
       render: (val) => <Typography variant="body2">{val}</Typography>

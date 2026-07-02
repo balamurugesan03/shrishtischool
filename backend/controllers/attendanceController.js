@@ -2,6 +2,7 @@ const qrcode = require('qrcode');
 const Student = require('../models/Student');
 const Attendance = require('../models/Attendance');
 const wa = require('../services/whatsappService');
+const { getScanStep } = require('../config/breakPeriods');
 const { successResponse, errorResponse, paginatedResponse } = require('../utils/apiResponse');
 
 // GET /api/attendance/qr/:id  — single student QR
@@ -67,13 +68,11 @@ exports.scanAttendance = async (req, res, next) => {
 
     const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
 
-    const todayRecords = await Attendance.find({ student: student._id, date: today }).sort({ timestamp: 1 });
+    const todayCount = await Attendance.countDocuments({ student: student._id, date: today });
 
-    const hasIN  = todayRecords.some(r => r.type === 'IN');
-    const hasOUT = todayRecords.some(r => r.type === 'OUT');
-
-    // Auto-detect: no IN → mark IN; has IN but no OUT → mark OUT; both done → new IN cycle
-    const type = !hasIN ? 'IN' : (hasIN && !hasOUT ? 'OUT' : 'IN');
+    // Fixed daily sequence: Entered → Mid Morning Break → Lunch Break → Afternoon Break → Left
+    const step = getScanStep(todayCount);
+    const { type, breakLabel, label } = step;
 
     const now = new Date();
 
@@ -81,6 +80,7 @@ exports.scanAttendance = async (req, res, next) => {
       student: student._id,
       date: today,
       type,
+      breakLabel,
       timestamp: now
     });
 
@@ -90,10 +90,12 @@ exports.scanAttendance = async (req, res, next) => {
     const fullName = `${student.firstName} ${student.lastName}`;
 
     let message;
-    if (type === 'IN') {
+    if (label === 'Entered') {
       message = `✅ *Attendance Alert*\n\n*${fullName}* has *entered* school.\n📅 Date: ${dateStr}\n⏰ Time: ${timeStr}\n🏫 Class: ${student.class} - ${student.section}\n🆔 ID: ${student.studentId}`;
-    } else {
+    } else if (label === 'Left') {
       message = `🔔 *Departure Alert*\n\n*${fullName}* has *left* school.\n📅 Date: ${dateStr}\n⏰ Time: ${timeStr}\n🏫 Class: ${student.class} - ${student.section}\n🆔 ID: ${student.studentId}`;
+    } else {
+      message = `🔔 *Break Alert*\n\n*${fullName}* has *taken ${label}*.\n📅 Date: ${dateStr}\n⏰ Time: ${timeStr}\n🏫 Class: ${student.class} - ${student.section}\n🆔 ID: ${student.studentId}`;
     }
 
     // Collect all available phone numbers (student + all parent fields)
@@ -131,6 +133,8 @@ exports.scanAttendance = async (req, res, next) => {
 
     return successResponse(res, {
       type,
+      label,
+      breakLabel,
       student: {
         firstName: student.firstName,
         lastName: student.lastName,
@@ -142,7 +146,7 @@ exports.scanAttendance = async (req, res, next) => {
       whatsappSent,
       whatsappError,
       phoneCount: uniquePhones.length
-    }, `Attendance marked: ${type}`);
+    }, `Attendance marked: ${label}`);
   } catch (err) {
     next(err);
   }
