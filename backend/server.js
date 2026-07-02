@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
+const whatsappService = require('./services/whatsappService');
 
 dotenv.config();
 
@@ -18,6 +19,9 @@ connectDB().then(async () => {
     console.log('[Auth] Superadmin created — username: superadmin | password: Admin@123');
   }
 });
+
+// Auto-connect WhatsApp using the saved session (default number 7397773618)
+whatsappService.init();
 
 // Middleware
 app.use(helmet());
