@@ -1,3 +1,5 @@
+const fs = require('fs');
+const path = require('path');
 const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js');
 const qrcode = require('qrcode');
 
@@ -5,8 +7,24 @@ let client = null;
 let qrDataURL = null;
 let status = 'disconnected'; // disconnected | initializing | qr | connected
 
+const SESSION_DIR = path.join(process.cwd(), '.wwebjs_auth', 'session');
+
 function getState() {
   return { status, qr: qrDataURL };
+}
+
+// Chrome leaves these behind if the previous process didn't exit cleanly
+// (crash, force-kill, restart mid-session). A stale lock makes the next
+// launch fail with "browser is already running" even though nothing is.
+function clearStaleLock() {
+  for (const f of ['SingletonLock', 'SingletonCookie', 'SingletonSocket']) {
+    try { fs.rmSync(path.join(SESSION_DIR, f), { force: true }); } catch (_) {}
+  }
+}
+
+function wipeSession() {
+  try { fs.rmSync(path.join(process.cwd(), '.wwebjs_auth'), { recursive: true, force: true }); } catch (_) {}
+  try { fs.rmSync(path.join(process.cwd(), '.wwebjs_cache'), { recursive: true, force: true }); } catch (_) {}
 }
 
 function init() {
@@ -14,9 +32,14 @@ function init() {
 
   status = 'initializing';
   qrDataURL = null;
+  clearStaleLock();
 
   client = new Client({
     authStrategy: new LocalAuth({ dataPath: '.wwebjs_auth' }),
+    webVersionCache: {
+      type: 'remote',
+      remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.3000.1040156871-alpha.html',
+    },
     puppeteer: {
       headless: true,
       args: [
@@ -67,6 +90,11 @@ function init() {
     qrDataURL = null;
     client = null;
     console.log('[WhatsApp] Disconnected:', reason);
+    // A LOGOUT means the phone unlinked this session — the saved local
+    // profile is now dead. Reusing it on the next connect is what causes
+    // the "browser already running" / stuck-initializing retry loop, so
+    // wipe it and force a clean QR scan next time.
+    if (reason === 'LOGOUT') wipeSession();
   });
 
   client.initialize().catch((err) => {
@@ -105,6 +133,11 @@ async function disconnect() {
   }
   status = 'disconnected';
   qrDataURL = null;
+  // client.destroy() resolves before Chrome has always fully released the
+  // profile's lock files on Windows — give it a moment, then clean up any
+  // lock left behind so the next /connect doesn't hit "already running".
+  await new Promise((r) => setTimeout(r, 1000));
+  clearStaleLock();
 }
 
 // Close the browser cleanly on restart/shutdown so it doesn't linger and
